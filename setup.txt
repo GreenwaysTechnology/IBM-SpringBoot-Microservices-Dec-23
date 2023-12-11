@@ -1,3 +1,9 @@
 
 Software Setup:
 ...............
+
+JDK 17 | 11
+
+IDE -Intellij Community Edition..
+
+Docker Desktop
