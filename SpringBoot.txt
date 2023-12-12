@@ -276,7 +276,7 @@ ioc container implementation:
 				JVM
 
 
-what is framework?
+What is framework?
    One Stop Solution
  Collection of tools and technologies provided in one place to build end to end applications mostly.
   
@@ -682,6 +682,1416 @@ public class ObjectCreationUsingSpring {
 
     }
 }
+.....................................................................................
+Setting values via constructors
+
+beans.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <!-- bean definitions here -->
+<!--    <bean id="customer" class="com.ibm.spring.beans.Customer">-->
+<!--        &lt;!&ndash;data setting via setters &ndash;&gt;-->
+<!--        <property name="id"  value="100"/>-->
+<!--        <property name="name" value="Subramanian"/>-->
+<!--    </bean>-->
+    <bean id="customer" class="com.ibm.spring.beans.Customer">
+         <constructor-arg name="id" value="100"/>
+         <constructor-arg name="name" value="Subramanian"/>
+    </bean>
+</beans>
+
+package com.ibm.spring;
+
+import com.ibm.spring.beans.Customer;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class ObjectCreationUsingSpring {
+    public static void main(String[] args) {
+        //Load Spring Container:XMLContainer,JavaConfigContainer,BootContainer
+        ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
+        System.out.println("Container is ready");
+        //Get the bean from the container.
+        Customer customer = context.getBean(Customer.class);
+        //read data
+        System.out.println(customer.getId() + " " + customer.getName());
+
+    }
+}
+.....................................................................................				 Dependency Injection
+.....................................................................................
+
+What is dependency Injection?
+
+  Linking objects
+  Setting Object Property values
+
+  Setting Object references with Object who refers it.
+
+Dependency Injection on reference types and Primitives.
+
+eg:
+  OrderService needs OrderRepository
+
+
+Types of DI:
+
+1.Setter
+    Linking objects after objects created
+2.Constructor
+    Linking objects, During object creation.
+
+When to use Setter vs Constructor?
+
+Note: 
+ Constructor properties are initlized during object creations
+ Settter properties are initlized after object creations
+
+Spring supports both.You can mix and match.
+
+Constructors:
+  ->Enforce mandatory dependencies
+
+Setters:
+ 1.Allow optional dependenices
+
+
+Setter and constructor injections can be done with primtive data types and reference types:
+
+Reference Type eg:
+..................
+
+Customer has address.
+
+beans.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <!-- bean definitions here -->
+    <!--    <bean id="customer" class="com.ibm.spring.beans.Customer">-->
+    <!--        &lt;!&ndash;data setting via setters &ndash;&gt;-->
+    <!--        <property name="id"  value="100"/>-->
+    <!--        <property name="name" value="Subramanian"/>-->
+    <!--    </bean>-->
+    <!--    <bean id="customer" class="com.ibm.spring.beans.Customer">-->
+    <!--         <constructor-arg name="id" value="100"/>-->
+    <!--         <constructor-arg name="name" value="Subramanian"/>-->
+    <!--    </bean>-->
+    <!--    Dependency injection-->
+    <!--    <bean id="customer" class="com.ibm.spring.beans.Customer">-->
+    <!--        &lt;!&ndash;        Primitive dependency&ndash;&gt;-->
+    <!--        <property name="id" value="100"/>-->
+    <!--        <property name="name" value="Subramanian"/>-->
+    <!--        &lt;!&ndash;        Reference Dependency&ndash;&gt;-->
+    <!--        <property name="address" ref="address"/>-->
+
+    <!--    </bean>-->
+    <bean id="customer" class="com.ibm.spring.beans.Customer">
+        <constructor-arg name="id" value="100"/>
+        <constructor-arg name="name" value="Subramanian"/>
+        <constructor-arg name="address" ref="address"/>
+    </bean>
+    <bean id="address" class="com.ibm.spring.beans.Address">
+        <property name="city" value="Coimbatore"/>
+        <property name="state" value="Tamil nadu"/>
+        <property name="zipcode" value="611111"/>
+    </bean>
+</beans>
+
+package com.ibm.spring;
+
+import com.ibm.spring.beans.Customer;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+
+public class DependencyInjection {
+    public static void main(String[] args) {
+        //Load Spring Container:XMLContainer,JavaConfigContainer,BootContainer
+        ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
+        System.out.println("Container is ready");
+        //Get the bean from the container.
+        Customer customer = context.getBean(Customer.class);
+        //read data
+        System.out.println(customer);
+
+    }
+}
+
+package com.ibm.spring.beans;
+
+public class Customer {
+    private int id;
+    private String name;
+
+    //dependency
+    private Address address;
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", address=" + address +
+                '}';
+    }
+
+    public Customer() {
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    public Customer(int id, String name, Address address) {
+        this.id = id;
+        this.name = name;
+        this.address = address;
+    }
+
+    public Customer(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}
+package com.ibm.spring.beans;
+
+public class Address {
+    private String city;
+    private String state;
+    private String zipcode;
+
+    public Address() {
+    }
+
+    public Address(String city, String state, String zipcode) {
+        this.city = city;
+        this.state = state;
+        this.zipcode = zipcode;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getZipcode() {
+        return zipcode;
+    }
+
+    public void setZipcode(String zipcode) {
+        this.zipcode = zipcode;
+    }
+
+    @Override
+    public String toString() {
+        return "Address{" +
+                "city='" + city + '\'' +
+                ", state='" + state + '\'' +
+                ", zipcode='" + zipcode + '\'' +
+                '}';
+    }
+}
+
+.....................................................................................
+				Dependency Injection values
+
+1.You can inject primitives values- int,float,string,char,boolean
+2.You can inject objects -Customer ,Address
+3.You can inject list - Collections,Map,List,Set
+.....................................................................................			 Program to Super Type - Interface Driven DI
+.....................................................................................
+
+package com.ibm.spring.beans.interfaces;
+
+public interface CustomerRepository {
+    String findAll();
+}
+package com.ibm.spring.beans.interfaces;
+
+public class CustomerInMemoryRepositoryImpl implements CustomerRepository {
+    @Override
+    public String findAll() {
+        return "CustomerInMemoryRepositoryImpl";
+    }
+}
+package com.ibm.spring.beans.interfaces;
+
+
+public class CustomerJPARepositoryImpl implements CustomerRepository {
+    @Override
+    public String findAll() {
+        return "CustomerJPARepositoryImpl";
+    }
+}
+
+package com.ibm.spring.beans.interfaces;
+
+public class CustomerService {
+    private CustomerRepository customerRepository;
+
+    public CustomerService() {
+    }
+
+    public CustomerService(CustomerRepository customerRepository) {
+        this.customerRepository = customerRepository;
+    }
+
+    public CustomerRepository getCustomerRepository() {
+        return customerRepository;
+    }
+
+    public void setCustomerRepository(CustomerRepository customerRepository) {
+        this.customerRepository = customerRepository;
+    }
+}
+
+beans.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="inmemory" class="com.ibm.spring.beans.interfaces.CustomerInMemoryRepositoryImpl"/>
+    <bean id="jparepo" class="com.ibm.spring.beans.interfaces.CustomerJPARepositoryImpl"/>
+    <bean id="customerService" class="com.ibm.spring.beans.interfaces.CustomerService">
+        <constructor-arg name="customerRepository" ref="inmemory"/>
+    </bean>
+
+</beans>
+Main:
+package com.ibm.spring;
+
+import com.ibm.spring.beans.Customer;
+import com.ibm.spring.beans.interfaces.CustomerService;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+
+public class InterfaceInjection {
+    public static void main(String[] args) {
+        //Load Spring Container:XMLContainer,JavaConfigContainer,BootContainer
+        ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
+        System.out.println("Container is ready");
+        //Get the bean from the container.
+        CustomerService customer = context.getBean(CustomerService.class);
+        //read data
+        System.out.println(customer.getCustomerRepository().findAll());
+
+    }
+}
+....................................................................................
+.....................................................................................
+Bean Definitions:
+1.How to create bean 
+   class,factory-method
+
+2.How to name beans?
+   id,name,alias
+
+3.scope of the beans? : visibility of the bean
+   singleton,prototype,
+   request,session,application,websocket
+
+4.Dependence Injections
+   constructor
+   setter
+   autowire
+
+5.Lazy initialization mode
+ controlling bean creations
+  eagar-default
+  lazy-ondemand
+  lazy-init="true"
+
+5.How to simplify bean injections? 
+   Autowiring mode 
+ no,byName,byType,constructor  
+
+.....................................................................................
+.............................................................................................
+					Bean Creation
+............................................................................................
+
+1.Via class  
+   Spring creates using new Operator
+  new Order()
+
+2.Via Factory Pattern
+
+-if constructor marked private
+   via factory factory api.
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="authService" class="com.ibm.spring.beans.AuthService" factory-method="getInstance"/>
+</beans>
+
+
+package com.ibm.spring.beans;
+
+public class AuthService {
+    private String userName = "admin";
+    private String password = "admin";
+
+    private AuthService() {
+
+    }
+
+    //Factory method through which you can create object
+    public static AuthService getInstance() {
+        System.out.println("Factory");
+        return new AuthService();
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+}
+package com.ibm.spring;
+
+import com.ibm.spring.beans.AuthService;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class FactoryBean {
+    public static void main(String[] args) {
+        //Load Spring Container:XMLContainer,JavaConfigContainer,BootContainer
+        ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
+        System.out.println("Container is ready");
+        //Get the bean from the container.
+        AuthService authService = context.getBean(AuthService.class);
+        //read data
+        System.out.println(authService.getUserName());
+//        AuthService authService = new AuthService();
+
+    }
+}
+...........................................................................
+			Bean Scopes
+.....................................................................................
+Generally, you can create multiple instance from bean definition.
+  some times if you want to control that bean creation
+you can use bean creation scope.
+
+Spring supports 6 scopes:
+ singleton,prototype,
+   request,session,application,websocket
+
+
+1.singleton
+ (Default) Scopes a single bean definition to a single object instance for each Spring IoC container.
+ if you call getBean no of time, spring returns the only one instance at any point of time.
+This is default scope.
+
+package com.ibm.spring;
+
+import com.ibm.spring.beans.Hello;
+import com.ibm.spring.beans.interfaces.CustomerService;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class BeanScope {
+    public static void main(String[] args) {
+        //Load Spring Container:XMLContainer,JavaConfigContainer,BootContainer
+        ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
+        System.out.println("Container is ready");
+        //Get the bean from the container.
+        Hello helloOne = context.getBean(Hello.class);
+        Hello helloTwo = context.getBean(Hello.class);
+        Hello helloThree = context.getBean(Hello.class);
+        Hello helloFour = context.getBean(Hello.class);
+
+    }
+}
+beans.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="Hello" class="com.ibm.spring.beans.Hello"/>
+</beans>
+
+2.prototype:
+a new bean instance is created every time a request for that specific bean is made 
+that is, the bean is injected into another bean or you request it through a getBean() method call on the container.
+
+beans.xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--    Single Ton-->
+    <!--    <bean id="Hello" class="com.ibm.spring.beans.Hello"/>-->
+
+    <!--    Prototype-->
+    <bean id="Hello" class="com.ibm.spring.beans.Hello" scope="prototype"/>
+
+</beans>
+
+package com.ibm.spring;
+
+import com.ibm.spring.beans.Hello;
+import com.ibm.spring.beans.interfaces.CustomerService;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class BeanScope {
+    public static void main(String[] args) {
+        //Load Spring Container:XMLContainer,JavaConfigContainer,BootContainer
+        ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
+        System.out.println("Container is ready");
+        //Get the bean from the container.
+        Hello helloOne = context.getBean(Hello.class);
+        Hello helloTwo = context.getBean(Hello.class);
+        Hello helloThree = context.getBean(Hello.class);
+        Hello helloFour = context.getBean(Hello.class);
+
+        System.out.println(helloOne.hashCode());
+        System.out.println(helloTwo.hashCode());
+        System.out.println(helloThree.hashCode());
+        System.out.println(helloFour.hashCode());
+
+    }
+}
+.....................................................................................
+				DI automations
+.....................................................................................
+autowire:
+
+Dependency Injections:
+ ->property - setter injections
+ ->constructor-arg ref ->constructor injections
+
+ 
+->autowire 
+Which is not new injection type, but it simplifies property and constructor injections
+
+     no ->Explicit via property or constructor-arg
+     byName - Implicit via property
+     byType - Implicit via type + property
+     constructor - Implicit via constructor
+
+autowire="no | byName | byType | constructor"
+
+Lab:
+
+Customer
+    |
+    Address ---->via autowire
+
+beans.xml - without autowire
+<bean id="customer" class="com.ibm.spring.beans.Customer">
+        <constructor-arg name="id" value="100"/>
+        <constructor-arg name="name" value="Subramanian"/>
+        <constructor-arg name="address" ref="address"/>
+    </bean>
+    <bean id="address" class="com.ibm.spring.beans.Address">
+        <property name="city" value="Coimbatore"/>
+        <property name="state" value="Tamil nadu"/>
+        <property name="zipcode" value="611111"/>
+    </bean>
+
+beans.xml wit autowire 
+    <bean id="customer" class="com.ibm.spring.beans.Customer" autowire="byType">
+        <constructor-arg name="id" value="100"/>
+        <constructor-arg name="name" value="Subramanian"/>
+<!--        <constructor-arg name="address" ref="address"/>-->
+    </bean>
+    <bean id="address" class="com.ibm.spring.beans.Address">
+        <property name="city" value="Coimbatore"/>
+        <property name="state" value="Tamil nadu"/>
+        <property name="zipcode" value="611111"/>
+    </bean>
+.....................................................................................
+Bean life cycles:
+.................
+
+init
+destroy
+
+Points:
+1.if you want to initalize the resources,
+ Resources:
+   Resource is nothing but ,something outside jvm
+    ex: FileSystem,Databases,Network sockets,Graphics context....
+  Resources must be mananaged properly , if not , it will give you
+ memory leaks.
+
+In general , resources are initialized inside Class constructors
+eg:Establishing database,socket connections, create file points,open file
+
+According to spring best practices, dont do it inside constructor
+ Why
+   WHich hindrences the bean intialization, which will drop app startup performance.
+
+then where can i initlaize
+ spring provides life cycle hooks
+
+   ->init-method="initmethod"
+   ->destroy-method="destroymethod" - Resouce clean up
+
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="databaseConnection" class="com.ibm.spring.beans.DatabaseConnection" init-method="init"
+          destroy-method="destroy"/>
+
+</beans>
+package com.ibm.spring;
+
+import com.ibm.spring.beans.Customer;
+import com.ibm.spring.beans.DatabaseConnection;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class LifeCyles {
+    public static void main(String[] args) {
+        //Load Spring Container:XMLContainer,JavaConfigContainer,BootContainer
+//        ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
+        ConfigurableApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
+        System.out.println("Container is ready");
+        //Get the bean from the container.
+        DatabaseConnection databaseConnection = context.getBean(DatabaseConnection.class);
+
+        context.registerShutdownHook();
+
+    }
+}
+How to call destroy hook method on bean?
+
+BeanFactory
+ |
+org.springframework.context.ApplicationContext
+ |
+->org.springframework.context.ConfigurableApplicationContext
+   |
+  registerShutdownHook();------->destroy method
+
+.....................................................................................
+			 Container Extensions Points
+.....................................................................................
+
+Typically, an application developer does not need to subclass  ApplicationContext implementation classes.
+
+ Instead, the Spring IoC container can be extended by plugging in implementations of special integration interfaces. 
+
+Spring core System:
+
+		  Spring Application
+			|	
+ 	    Configuration Management System
+		 (tools-XML,Annotations)
+		-------------------------
+		|			|
+		| Spring IOC Container  |
+		------------------------
+			|
+		       JVM
+
+
+ How to add extensions(plugins) on to the Existing Spring Container?
+
+
+ 		 Spring Application
+			|	
+ 	    Configuration Management System
+		 (tools-XML,Annotations)
+		-------------------------
+		|			|--->Extensions
+					|    1.BeanPostProcessor 
+		|			|     etc...
+		|			|
+		| 			|
+		| Spring IOC Container  |
+		|			|
+		|			|	
+		|			|
+		|		        |
+		------------------------
+			|
+		       JVM
+
+Features
+1.How to instrument beans
+2.How to instrument containers
+
+
+BeanPostProcessor: Extensions
+..................
+  BeanPostProcessor are classes that tells Spring what should be done after beans are created.
+
+package com.ibm.spring.beans;
+
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanPostProcessor;
+
+public class BeanPostProcessorExtension implements BeanPostProcessor {
+    //This method will be called after bean creation
+    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+        System.out.println("postProcessAfterInitialization : " + bean + " " + beanName);
+        return bean;
+    }
+
+    //this method will be called before before bean creation.
+    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+        System.out.println("postProcessBeforeInitialization : " + bean + " " + beanName);
+        return bean;
+    }
+}
+
+package com.ibm.spring;
+
+import com.ibm.spring.beans.BeanPostProcessorExtension;
+import com.ibm.spring.beans.Customer;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class BeanPostProcessor {
+    public static void main(String[] args) {
+        //Load Spring Container:XMLContainer,JavaConfigContainer,BootContainer
+        ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
+        System.out.println("Container is ready");
+
+
+    }
+}
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="hello" class="com.ibm.spring.beans.Hello"/>
+    <bean class="com.ibm.spring.beans.BeanPostProcessorExtension"/>
+
+
+</beans>
+2.BeanFactoryPostProcessor : Container Extension, where we instrument container itself.
+
+<bean class="com.ibm.spring.app.extensions.FactoryBeanPostProcessorExtension"/>
+package com.ibm.spring.app.extensions;
+
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+
+public class FactoryBeanPostProcessorExtension implements BeanFactoryPostProcessor {
+
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+
+        System.out.println("Container Extensions : " + beanFactory);
+
+    }
+
+}
+.....................................................................................
+
+	  More Container Features(extensions)
+
+             Spring Application
+			|	
+ 	    Configuration Management System
+		 (tools-XML,Annotations)
+		-------------------------
+		|			|--->Extensions
+					|    1.BeanPostProcessor 
+		|			|    2.Features2
+		|			|    3.Feature3
+		| 			|    4.FeatureN
+		| Spring IOC Container  |
+		|			|
+		|			|	
+		|			|
+		|		        |
+		------------------------
+			|
+		       JVM
+
+
+	Spring provides lot of built in Extensions
+PropertyPlaceholderConfigurer :
+   It is used to externalize the bean property values
+eg:
+
+Bean defintion file
+<bean id="customer" class="com.ae.spring.entity.Customer"
+  <property name="customerId" value="100">
+</bean>
+
+With PropertyPlaceHolder = ${propertykey} => propValue
+eg: 
+<bean id="customer" class="com.ae.spring.entity.Customer"
+  <property name="customerId" value="${customer.id}">
+</bean>
+
+PropertyPlaceholderConfigurer 
+
+classpath:customer-info.properties
+customer.id=1
+customer.name=Ram
+
+eg:
+Steps:
+1.property file
+src/main/java/customer-info.properties
+customer.id=1
+customer.name=Ram
+2.Activate Extension to read Property file
+  ->
+<beanclass="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations" value="classpath:customer-info.properties" />
+</bean>
+
+3.Read Property value:
+		ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
+		Customer customer = context.getBean("customer", Customer.class);
+		System.out.println(customer.getId() + " " + customer.getName());
+....................................................................................
+			....................................................................................
+	  How to introduce Annotations -Annotation Driven configuration
+.....................................................................................
+Annotations:
+ Meta Information about class,methods,fields.
+
+Why Annotation?
+ Annotations help to inject "boiler plate code" -The code which is not neccessary for the dev but necessary for compiler,build tools,document generation tools,runtime.
+
+Spring Introduced Annoations to simplify the lot of code generations.
+
+Types of Spring Annotations
+
+1.Spring Properity annotations
+2.JSR 250 Annotations 
+
+
+How to introduce Annotations inside Spring?
+ 
+ Via ContainerExtension Mechanism
+
+Common Annotations:
+1.RequiredAnnotationBeanPostProcessor - @Required
+2.AutowiredAnnotationBeanPostProcessor  -@Autowrited
+3.CommonAnnotationBeanPostProcessor  -@Common
+4.PersistenceAnnotationBeanPostProcessor -@Entity
+etc....
+
+Steps to integrate Annotations:
+
+1.Activate The Annoation via ContainerExtension Point Beans
+
+beans.xml
+
+ <bean class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor"/>
+ -@Required
+
+ -@Autowried
+<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
+
+
+What if any one of the AnnotationBeanPostProcessor has its own dependency, we need to inject
+That as well, other wise it will throw error.
+
+what if i want to use more annotations, i need to add more AnnotationBeanPostProcessor beans in bean.xml
+  This is very complex
+
+Note: modern spring has implicitly added annoation post bean processors , so you dont need to add "Core Annotation BeanPostProcessor in beans.xml".
+
+.....................................................................................
+			Automation - Annoation Scanner
+.....................................................................................
+
+Spring added feature called automated scanner, which scans all annoations from the build path/class path, creates all the beans related to annotationBeanPostoer
+
+How to tell spring container to scan annotations?
+
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--    Tell to spring to scan all annation : you dont need to annotation post processors-->
+    <context:annotation-config/>
+
+</beans>
+
+Autowire annotation:
+....................
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--    Tell to spring to scan all annation : you dont need to annotation post processors-->
+    <context:annotation-config/>
+    <bean id="customer" class="com.ibm.spring.beans.Customer">
+        <constructor-arg name="id" value="100"/>
+        <constructor-arg name="name" value="Subramanian"/>
+    </bean>
+    <bean id="address" class="com.ibm.spring.beans.Address">
+        <property name="city" value="Coimbatore"/>
+        <property name="state" value="Tamil nadu"/>
+        <property name="zipcode" value="611111"/>
+    </bean>
+</beans>
+package com.ibm.spring.beans;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+public class Customer {
+    private int id;
+    private String name;
+
+    //dependency
+    @Autowired
+    private Address address;
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", address=" + address +
+                '}';
+    }
+
+    public Customer() {
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    public Customer(int id, String name, Address address) {
+        this.id = id;
+        this.name = name;
+        this.address = address;
+    }
+
+    public Customer(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}
+package com.ibm.spring.beans;
+
+public class Address {
+    private String city;
+    private String state;
+    private String zipcode;
+
+    public Address() {
+    }
+
+    public Address(String city, String state, String zipcode) {
+        this.city = city;
+        this.state = state;
+        this.zipcode = zipcode;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getZipcode() {
+        return zipcode;
+    }
+
+    public void setZipcode(String zipcode) {
+        this.zipcode = zipcode;
+    }
+
+    @Override
+    public String toString() {
+        return "Address{" +
+                "city='" + city + '\'' +
+                ", state='" + state + '\'' +
+                ", zipcode='" + zipcode + '\'' +
+                '}';
+    }
+}
+package com.ibm.spring;
+
+import com.ibm.spring.beans.Customer;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+
+public class DependencyInjection {
+    public static void main(String[] args) {
+        //Load Spring Container:XMLContainer,JavaConfigContainer,BootContainer
+        ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
+        System.out.println("Container is ready");
+        //Get the bean from the container.
+        Customer customer = context.getBean(Customer.class);
+        //read data
+        System.out.println(customer);
+
+    }
+}
+....................................................................................
+				Bean Life Cycles and annoatations
+
+in order to add life cycle annotations which is not part of spring core which is part of jsr 250. we need to add separate depedency.
+
+in pom.xml
+  <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <version>1.3.2</version>
+   </dependency>
+
+eg:
+package com.ibm.spring.app.annotations;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.PostConstruct;
+
+public class Customer {
+    private  int id;
+    private String name;
+
+    //life cycle methods
+    @PostConstruct
+    public void init(){
+        System.out.println("Init");
+    }
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", address=" + address +
+                '}';
+    }
+
+    @Autowired
+    private Address address;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+}
+
+.....................................................................................
+			How to reduce code slowly via annotations
+.....................................................................................
+Types of Annotations
+.....................................................................................
+
+1.JSR 250 annoations
+
+@PostConstruct
+@PreDestroy
+
+2.Spring Annoations
+@Required,@Autowired......etc...
+
+You have beans.xml with annotation configuration, but still we have bean creation definitions how to remove those areas.
+
+How to remove bean definitions from the beans.xml file
+
+   <bean id="student" class="com.ibm.spring.app.annotations.Customer">
+            <property name="id" value="1"/>
+            <property name="name" value="Subramanian"/>
+   </bean>
+
+......................................................................................
+					Types of Annotations
+..............................................................................................
+
+1.JSR 250 annoations
+
+@PostConstruct
+@PreDestroy
+
+
+2.Spring Annoations
+
+How to remove bean definitions from the beans.xml file
+
+    <bean id="customer" class="com.ibm.spring.beans.Customer">
+        <constructor-arg name="id" value="100"/>
+        <constructor-arg name="name" value="Subramanian"/>
+    </bean>
+ <bean id="address" class="com.ibm.spring.beans.Address">
+        <property name="city" value="Coimbatore"/>
+        <property name="state" value="Tamil nadu"/>
+        <property name="zipcode" value="611111"/>
+    </bean>
+
+Stereotype Annotations:
+
+Stereotype: "Same type of things but it adds extra behaviour based on context"
+
+@Component
+
+What is Component?
+
+The term coined by Microsoft in 1989.
+In Object Oriented System Every thing is Object
+The Term object is more general term.
+
+Component is also Object(Bean) in spring context
+  ->It is resulable
+  ->follows all java bean standards
+
+In java technology:
+Bean
+ In java Bean is called "java Object Only"
+
+EJB
+ It is also java object, which is distributed
+
+Enitity
+ It is also java object, which is persitable into fs,networks,rdbms
+
+What is use of @Component?
+ ->To eleminate bean definition from beans.xml file
+
+<bean id="customerService"  class="com.ae.spring.service.impl.CustomerServiceImpl"/>
+
+
+Api doc:
+
+ @Target(value=TYPE)
+ @Retention(value=RUNTIME)
+ @Documented
+ @Indexed
+public @interface Component
+
+@Component is class level annotation,declared on the top of class.
+
+Indicates that an annotated class is a "component"
+Such classes are considered as candidates for auto-detection when using annotation-based configuration and classpath scanning.
+
+
+eg:
+beans.xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--    Tell to spring to scan all annation : you dont need to annotation post processors-->
+    <context:annotation-config/>
+
+    <bean id="orderService" class="com.ibm.spring.beans.OrderService"/>
+</beans>
+
+
+Auto-detection and component scanning:
+base package: com.ae.spring
+			    com
+			     |
+			    ae
+			     |
+                           spring
+		    -----------------------------
+		   |                            |
+                service                        repo
+		   |                            |
+		 impl                          impl
+-------------------------------       -----------------------------
+  |               |                   |                          |
+CustomerService ProductService     CustomerRepoImpl          ProductRepoImpl
+Impl            Impl
+
+@Component      @Component         @Component                @Component
+.....................................................................................
+.............................................................................................
+			Automation - Stereotype Annoation Scanner
+   ..............................................................................................
+Types of SteroTypes:
+1.Component
+2.Service
+3.Repository
+4.Controller
+5.RestController   
+
+
+How to scan SteroTypes?
+
+ <context:component-scan base-package="com.valtech.spring.beans.automation"/>
+
+This package and its subpackages , scan and creates beans and make it ready.
+
+@Component is a generic stereotype for any Spring-managed component.
+
+@Repository, @Service, and @Controller are specializations of @Component for more specific use cases.
+
+by annotating them with @Repository, @Service, or @Controller instead, your classes are more properly suited for processing by tools or associating with aspects.
+
+
+beans.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--    Tell to spring to scan all annation : you dont need to annotation post processors-->
+    <context:annotation-config/>
+    <context:component-scan base-package="com.ibm.spring"/>
+    <!--    -->
+
+    <!--    <bean id="orderService" class="com.ibm.spring.beans.OrderService"/>-->
+</beans>
+
+OrderService
+package com.ibm.spring.beans;
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
+
+@Component
+public class OrderService {
+
+    @Autowired
+    private PaymentService paymentService;
+
+    public OrderService() {
+    }
+
+    public OrderService(PaymentService paymentService) {
+        this.paymentService = paymentService;
+    }
+
+    public PaymentService getPaymentService() {
+        return paymentService;
+    }
+
+    public void setPaymentService(PaymentService paymentService) {
+        this.paymentService = paymentService;
+    }
+
+    public String findAll() {
+        return "orders" + this.paymentService.getPayment();
+    }
+}
+
+PaymentService
+package com.ibm.spring.beans;
+
+import org.springframework.stereotype.Component;
+
+@Component
+public class PaymentService {
+    public String getPayment() {
+        return "Payment service";
+    }
+
+}
+.....................................................................................				DOMAIN Driven Design
+.....................................................................................
+ 
+@Service:
+
+@Target(value=TYPE)
+ @Retention(value=RUNTIME)
+ @Documented
+ @Component
+public @interface Service
+
+Indicates that an annotated class is a "Service", originally defined by Domain-Driven Design (Evans, 2003) as "an operation offered as an interface that stands alone in the model, with no encapsulated state."
+
+
+@Repository:
+@Target(value=TYPE)
+ @Retention(value=RUNTIME)
+ @Documented
+ @Component
+public @interface Repository
+
+indicates that an annotated class is a "Repository", originally defined by Domain-Driven Design (Evans, 2003) as "a mechanism for encapsulating storage, retrieval, and search behavior which emulates a collection of objects".
+
+...........................................................................................
+
+@Target(value=TYPE)
+ @Retention(value=RUNTIME)
+ @Documented
+ @Component
+public @interface Controller
+Indicates that an annotated class is a "Controller" (e.g. a web controller).
+.....................................................................................
+				 End of Xml Configuration
+.....................................................................................
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+    <!--scanner for common Annotation -->
+    <context:annotation-config/>
+    <!--    Scanner for StreoType Annotations-->
+    <context:component-scan base-package="com.valtech.spring.beans.automation"/>
+</beans>
+....................................................................................
+....................................................................................
+..............................................................................................
+		What if i want to remove this beans.xml itself
+			    Java Config
+.............................................................................................
+
+Thanks to XML ,Good bye to XML,Welcome to Java Config:
+......................................................
+
+What is Java Config?
+
+JavaConfig <=======> beans.xml
+  but it is pure java Program.
+
+Why Java config?
+  Java Config was introduced to remove XML,
+
+The XML is outside spring.
+Spring need to parse xml file and construct objects accordingly
+Which is heavy weight.
+Spring introduced new configuration system which is written in java itself.
+.....................................................................................
+
+
+
+
 
 
 

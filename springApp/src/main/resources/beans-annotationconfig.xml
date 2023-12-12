@@ -9,8 +9,13 @@
 
     <!--    Tell to spring to scan all annation : you dont need to annotation post processors-->
     <context:annotation-config/>
-    <context:component-scan base-package="com.ibm.spring"/>
-    <!--    -->
-
-    <!--    <bean id="orderService" class="com.ibm.spring.beans.OrderService"/>-->
+    <bean id="customer" class="com.ibm.spring.beans.Customer">
+        <constructor-arg name="id" value="100"/>
+        <constructor-arg name="name" value="Subramanian"/>
+    </bean>
+    <bean id="address" class="com.ibm.spring.beans.Address">
+        <property name="city" value="Coimbatore"/>
+        <property name="state" value="Tamil nadu"/>
+        <property name="zipcode" value="611111"/>
+    </bean>
 </beans>

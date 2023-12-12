@@ -4,10 +4,10 @@
        xsi:schemaLocation="
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <!-- bean definitions here -->
-    <bean id="customer" class="com.ibm.spring.beans.Customer">
-        <!--data setting via setters -->
-        <property name="id"  value="100"/>
-        <property name="name" value="Subramanian"/>
-    </bean>
+    <!--    Single Ton-->
+    <!--    <bean id="Hello" class="com.ibm.spring.beans.Hello"/>-->
+
+    <!--    Prototype-->
+    <bean id="Hello" class="com.ibm.spring.beans.Hello" scope="prototype"/>
+
 </beans>

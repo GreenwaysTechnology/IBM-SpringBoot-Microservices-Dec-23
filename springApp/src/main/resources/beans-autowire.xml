@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--    without auto wire-->
+<!--    <bean id="customer" class="com.ibm.spring.beans.Customer">-->
+<!--        <constructor-arg name="id" value="100"/>-->
+<!--        <constructor-arg name="name" value="Subramanian"/>-->
+<!--        <constructor-arg name="address" ref="address"/>-->
+<!--    </bean>-->
+<!--    <bean id="address" class="com.ibm.spring.beans.Address">-->
+<!--        <property name="city" value="Coimbatore"/>-->
+<!--        <property name="state" value="Tamil nadu"/>-->
+<!--        <property name="zipcode" value="611111"/>-->
+<!--    </bean>-->
+
+    <bean id="customer" class="com.ibm.spring.beans.Customer" autowire="byType">
+        <constructor-arg name="id" value="100"/>
+        <constructor-arg name="name" value="Subramanian"/>
+<!--        <constructor-arg name="address" ref="address"/>-->
+    </bean>
+    <bean id="address" class="com.ibm.spring.beans.Address">
+        <property name="city" value="Coimbatore"/>
+        <property name="state" value="Tamil nadu"/>
+        <property name="zipcode" value="611111"/>
+    </bean>
+</beans>
