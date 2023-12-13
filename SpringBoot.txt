@@ -2089,11 +2089,329 @@ Which is heavy weight.
 Spring introduced new configuration system which is written in java itself.
 .....................................................................................
 
+Java Configuration:
+
+1.Bean declaration : @Component/@Service/@Repository/@Controller
+
+package com.ibm.spring.beans;
+
+import org.springframework.stereotype.Component;
+
+@Component
+public class HelloWorld {
+    public String sayHello() {
+        return "Hello";
+    }
+}
+
+Configuration:
+package com.ibm.spring.beans.config;
+
+//This is class where we are going to create beans: java config
+//AppConfig.java == beans.xml
+
+import com.ibm.spring.beans.HelloWorld;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+//<beans>
+@Configuration
+public class AppConfig {
+    //write logic to create bean
+
+    //<bean/>
+    @Bean
+    public HelloWorld createHelloWorld() {
+        return new HelloWorld();
+    }
+}
+//</beans>
+
+Main : Start Spring Container : AnnotationConfigApplicationContext(AppConfig.class)
+
+package com.ibm.spring;
+
+import com.ibm.spring.beans.HelloWorld;
+import com.ibm.spring.beans.config.AppConfig;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+public class CreateBean {
+    public static void main(String[] args) {
+        ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
+        System.out.println("Spring Container is ready");
+        HelloWorld helloWorld = context.getBean(HelloWorld.class);
+        System.out.println(helloWorld.sayHello());
+
+    }
+}
+.....................................................................................
+				How to simplify or modularize the bean creations
+.....................................................................................
+
+Modulariazation:
+...............
+
+Can we have multiple bean definition files- modular definition files
+
+1.XML is so complex to maintain when app grows.
+   -In general we can have multiple configurations
+  like
+	projectname-dao.xml
+	cleartrip.dao.xml 
+        cleartrip.service.xml
+        cleartrip.entitis.xml
+	cleartrip.beans.xml
+via Program:
+ConfigurableApplicationContext context = ClassPathXmlApplicationContext("bank-app.xml","account-repo.xml");
+
+or
+ConfigurableApplicationContext context = new ClassPathXmlApplicationContext
+new String[] { "bank-app.xml", "account-repo.xml" });
+
+How to break the configuration in annotations?
+
+customer
+ @Configuration
+ class  CustomerConfig {
+   ///customer beans
+ }
+
+order
+@Configuration
+ class  OrderConfig {
+   ///customer beans
+ }
+accounts
+@Configuration
+ class  AccountsConfig {
+   ///customer beans
+ }
+
+eg:
+package com.ibm.spring.beans.config;
+
+import com.ibm.spring.beans.HelloWorld;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class HelloConfig {
+
+    @Bean
+    public HelloWorld createHelloWorld() {
+        return new HelloWorld();
+    }
+}
+package com.ibm.spring.beans.config;
+
+import com.ibm.spring.beans.CustomerService;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class CustomerConfig {
+
+    @Bean
+    public CustomerService getCustomerService(){
+         return new CustomerService();
+    }
+}
+
+package com.ibm.spring.beans.config;
+
+//This is class where we are going to create beans: java config
+//AppConfig.java == beans.xml
+
+import com.ibm.spring.beans.CustomerService;
+import com.ibm.spring.beans.HelloWorld;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+
+//<beans>
+@Configuration
+@Import({HelloConfig.class, CustomerConfig.class})
+public class AppConfig {
+    //write logic to create bean
+    //<bean/>
+}
+//</beans>
+
+package com.ibm.spring.beans;
+
+import org.springframework.stereotype.Service;
+
+@Service
+public class CustomerService {
+
+    public String findAll() {
+        return "findAll";
+    }
+}
+package com.ibm.spring;
+
+import com.ibm.spring.beans.CustomerService;
+import com.ibm.spring.beans.HelloWorld;
+import com.ibm.spring.beans.config.AppConfig;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+public class CreateBean {
+    public static void main(String[] args) {
+        ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
+        System.out.println("Spring Container is ready");
+        HelloWorld helloWorld = context.getBean(HelloWorld.class);
+        System.out.println(helloWorld.sayHello());
+        CustomerService customerService = context.getBean(CustomerService.class);
+        System.out.println(customerService.findAll());
+
+    }
+}
+.....................................................................................
+
+What if your app grows, then bean creations in the Config is really hard, how to remove beans creation configuration?
+
+.....................................................................................
+			How to remove bean creations from the Java config
+.....................................................................................
+@Component-scan  == beans.xml <contex:component-scan base-package="com.ibm.spring"/>
+
+Note: Please disable any code which is written to create beans automatically.
+
+	
+package com.ibm.spring.beans.config;
+
+//This is class where we are going to create beans: java config
+//AppConfig.java == beans.xml
+
+import com.ibm.spring.beans.CustomerService;
+import com.ibm.spring.beans.HelloWorld;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+
+//<beans>
+//@Configuration
+//@Import({HelloConfig.class, CustomerConfig.class})
+@ComponentScan(basePackages = "com.ibm.spring")
+public class AppConfig {
+    //write logic to create bean
+    //<bean/>
+}
+//</beans>
+....................................................................................
+			Dependency injection and java config
+...................................................................................
+package com.ibm.spring.beans;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
+public class Customer {
+    private int id;
+    private String name;
+    @Autowired
+    private Address address;
+
+    public Customer() {
+    }
+
+    public Customer(int id, String name, Address address) {
+        this.id = id;
+        this.name = name;
+        this.address = address;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", address=" + address +
+                '}';
+    }
+}
+package com.ibm.spring.beans;
+
+import org.springframework.stereotype.Component;
+
+@Component
+public class Address {
+    private String city;
+
+    public Address() {
+    }
+
+    @Override
+    public String toString() {
+        return "Address{" +
+                "city='" + city + '\'' +
+                '}';
+    }
+
+    public Address(String city) {
+        this.city = city;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+}
+package com.ibm.spring;
+
+import com.ibm.spring.beans.Address;
+import com.ibm.spring.beans.Customer;
+import com.ibm.spring.beans.CustomerService;
+import com.ibm.spring.beans.HelloWorld;
+import com.ibm.spring.beans.config.AppConfig;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+public class DependencyInjection {
+    public static void main(String[] args) {
+        ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
+        System.out.println("Spring Container is ready");
+        Customer customer = context.getBean(Customer.class);
+        customer.setId(1);
+        customer.setName("Subramanain");
+        customer.setAddress(new Address("Coimbatore"));
+        System.out.println(customer);
 
 
-
-
-
+    }
+}
+.....................................................................................
 
 
 
