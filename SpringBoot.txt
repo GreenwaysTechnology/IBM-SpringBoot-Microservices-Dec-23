@@ -2412,8 +2412,698 @@ public class DependencyInjection {
     }
 }
 .....................................................................................
+			  Auto Configuration
+.....................................................................................
+Spring allows us  automatically configure your spring application based on bean definitions in the class path.
+
+How to opt-in auto configuration?
+
+@EnableAutoConfiguration or @SpringBootApplication
+
+.....................................................................................
+					Auto Configuration
+				 Getting Spring Boot Architecture
+.....................................................................................
+
+What is Spring Boot?
+
+Spring Boot makes it easy to create stand-alone, production-grade Spring based Applications that you can "just run".
+
+We take an opinionated view of the Spring platform and third-party libraries so you can get started with minimum fuss. Most Spring Boot applications need minimal Spring configuration.
+
+Spring Boot Focus Mainly Configuration
+
+1.Build Configuration - lib configuration -pom.xml
+2.Application Configuration.
+
+Use case : i want to create WebApp using Spring- SpringMVC
+
+Architecture:
+
+WEB  +DATABASE CONNECTion using Mysql
+
+Use case : i want to create WebApp using Spring- SpringMVC
+
+Architecture:
+
+WEB  +DATABASE CONNECTion using Mysql
+
+Steps:
+
+1.you have to create maven project
+
+2.you need to add spring dependencies
+   Spring-context
+   Spring-web
+   Spring-mvc
+   mysql-connector-java
+   commons-dbcp
+   spring-orm
+   hibernate-entitymanager
+   jsr-250-api
+ etc.........
+
+3.App configuration
+  src
+   -main
+      webapp
+       -web-inf
+       views
+4.beans.xml / java config
+   config
+      WebListener COnfiguration
+       -Change Spring container from plain to web
+      WebAppConfig
+        ViewResolver
+  DataSourceConfig
+  JPAConfig
+.....................................................................................
+........................................................................................................
+					Why Spring Boot?
+
+Spring Boot 
+   starters reduces build dependency - POM Dependencies/project dependencies
+   AutoConfigrator reduces the AppDepedency
+
+1.Create stand-alone Spring applications
+   You can deploy apps in containers,cloud.....easily
+
+2.Embeded Tomcat, Jetty or Undertow directly (no need to deploy WAR files)
+   SPring boots provides execuatble jar / fat jar /uber jar.	
+
+3.Provide opinionated 'starter' dependencies to simplify your build configuration
+     Looks like profie based configuration which is applied even for pom dependencies
+
+4.Automatically configure Spring and 3rd party libraries whenever possible
+    Via autoconfiguration and class path scanning.
+
+Provide production-ready features such as metrics, health checks, and externalized configuration
+
+How to begin with spring boot application?
+
+YOu can create standalone spring boot app 
+YOu can create web spring boot app
+
+if you want to create spring boot project, https://start.spring.io/
 
 
+pom.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>3.2.0</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.ibm</groupId>
+	<artifactId>myspringboot</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>myspringboot</name>
+	<description>Demo project for Spring Boot</description>
+	<properties>
+		<java.version>17</java.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
+
+Main
+package com.ibm;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class MyspringbootApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(MyspringbootApplication.class, args);
+	}
+
+}
+....................................................................................
+
+E:\session\IBM\2023\Dec\myspringboot> mvnw dependency:tree
+[INFO] com.ibm:myspringboot:jar:0.0.1-SNAPSHOT
+[INFO] +- org.springframework.boot:spring-boot-starter-web:jar:3.2.0:compile
+[INFO] |  +- org.springframework.boot:spring-boot-starter:jar:3.2.0:compile 
+[INFO] |  |  +- org.springframework.boot:spring-boot:jar:3.2.0:compile      
+[INFO] |  |  +- org.springframework.boot:spring-boot-autoconfigure:jar:3.2.0:compile
+[INFO] |  |  +- org.springframework.boot:spring-boot-starter-logging:jar:3.2.0:compile
+[INFO] |  |  |  +- ch.qos.logback:logback-classic:jar:1.4.11:compile
+[INFO] |  |  |  |  \- ch.qos.logback:logback-core:jar:1.4.11:compile
+[INFO] |  |  |  +- org.apache.logging.log4j:log4j-to-slf4j:jar:2.21.1:compile
+[INFO] |  |  |  |  \- org.apache.logging.log4j:log4j-api:jar:2.21.1:compile
+[INFO] |  |  |  \- org.slf4j:jul-to-slf4j:jar:2.0.9:compile
+[INFO] |  |  +- jakarta.annotation:jakarta.annotation-api:jar:2.1.1:compile
+[INFO] |  |  \- org.yaml:snakeyaml:jar:2.2:compile
+[INFO] |  +- org.springframework.boot:spring-boot-starter-json:jar:3.2.0:compile
+[INFO] |  |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.15.3:compile
+[INFO] |  |  |  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.15.3:compile
+[INFO] |  |  |  \- com.fasterxml.jackson.core:jackson-core:jar:2.15.3:compile
+[INFO] |  |  +- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:jar:2.15.3:compile
+[INFO] |  |  +- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:jar:2.15.3:compile
+[INFO] |  |  \- com.fasterxml.jackson.module:jackson-module-parameter-names:jar:2.15.3:compile
+[INFO] |  +- org.springframework.boot:spring-boot-starter-tomcat:jar:3.2.0:compile
+[INFO] |  |  +- org.apache.tomcat.embed:tomcat-embed-core:jar:10.1.16:compile
+[INFO] |  |  +- org.apache.tomcat.embed:tomcat-embed-el:jar:10.1.16:compile
+[INFO] |  |  \- org.apache.tomcat.embed:tomcat-embed-websocket:jar:10.1.16:compile
+[INFO] |  +- org.springframework:spring-web:jar:6.1.1:compile
+[INFO] |  |  +- org.springframework:spring-beans:jar:6.1.1:compile
+[INFO] |  |  \- io.micrometer:micrometer-observation:jar:1.12.0:compile
+[INFO] |  |     \- io.micrometer:micrometer-commons:jar:1.12.0:compile
+[INFO] |  \- org.springframework:spring-webmvc:jar:6.1.1:compile
+[INFO] |     +- org.springframework:spring-aop:jar:6.1.1:compile
+[INFO] |     +- org.springframework:spring-context:jar:6.1.1:compile
+[INFO] |     \- org.springframework:spring-expression:jar:6.1.1:compile
+[INFO] \- org.springframework.boot:spring-boot-starter-test:jar:3.2.0:test
+[INFO]    +- org.springframework.boot:spring-boot-test:jar:3.2.0:test
+[INFO]    +- org.springframework.boot:spring-boot-test-autoconfigure:jar:3.2.0:test
+[INFO]    +- com.jayway.jsonpath:json-path:jar:2.8.0:test
+[INFO]    |  \- org.slf4j:slf4j-api:jar:2.0.9:compile
+[INFO]    +- jakarta.xml.bind:jakarta.xml.bind-api:jar:4.0.1:test
+[INFO]    |  \- jakarta.activation:jakarta.activation-api:jar:2.1.2:test
+[INFO]    +- net.minidev:json-smart:jar:2.5.0:test
+[INFO]    |  \- net.minidev:accessors-smart:jar:2.5.0:test
+[INFO]    |     \- org.ow2.asm:asm:jar:9.3:test
+[INFO]    +- org.assertj:assertj-core:jar:3.24.2:test
+[INFO]    |  \- net.bytebuddy:byte-buddy:jar:1.14.10:test
+[INFO]    +- org.awaitility:awaitility:jar:4.2.0:test
+[INFO]    +- org.hamcrest:hamcrest:jar:2.2:test
+[INFO]    +- org.junit.jupiter:junit-jupiter:jar:5.10.1:test
+[INFO]    |  +- org.junit.jupiter:junit-jupiter-api:jar:5.10.1:test
+[INFO]    |  |  +- org.opentest4j:opentest4j:jar:1.3.0:test
+[INFO]    |  |  +- org.junit.platform:junit-platform-commons:jar:1.10.1:test
+[INFO]    |  |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO]    |  +- org.junit.jupiter:junit-jupiter-params:jar:5.10.1:test
+[INFO]    |  \- org.junit.jupiter:junit-jupiter-engine:jar:5.10.1:test
+[INFO]    |     \- org.junit.platform:junit-platform-engine:jar:1.10.1:test
+[INFO]    +- org.mockito:mockito-core:jar:5.7.0:test
+[INFO]    |  +- net.bytebuddy:byte-buddy-agent:jar:1.14.10:test
+[INFO]    |  \- org.objenesis:objenesis:jar:3.3:test
+[INFO]    +- org.mockito:mockito-junit-jupiter:jar:5.7.0:test
+[INFO]    +- org.skyscreamer:jsonassert:jar:1.5.1:test
+[INFO]    |  \- com.vaadin.external.google:android-json:jar:0.0.20131108.vaadin1:test
+[INFO]    +- org.springframework:spring-core:jar:6.1.1:compile
+[INFO]    |  \- org.springframework:spring-jcl:jar:6.1.1:compile
+[INFO]    +- org.springframework:spring-test:jar:6.1.1:test
+[INFO]    \- org.xmlunit:xmlunit-core:jar:2.9.1:test
+
+
+Here one pom dependency will bring all dependant libs.
+
+AutoConfiguration:
+..................
+
+Configuration is based on config meta data provied in "META-INF/spring.factories"
+
+org.springframework.boot.spring-autoconfigure.2.5.3
+
+spring.factories 
+  It is meta configuration file read by spring container to create objects/beans based on certain conditions -rules
+
+
+Spring container scans spring.factories file , starts loading configuration, which apples @condtional 
+
+annotations.
+
+  Container------|AppConfig----|spring.factories----starts initalizing beans/configurations/components   based on rules(conditions) => Spring Boot.
+
+
+spring-configuration-meta.json
+
+ This file contains default "Properties and values" - application.properties file default value
+ eg
+ {
+      "name": "spring.redis",
+      "type": "org.springframework.boot.autoconfigure.data.redis.RedisProperties",
+      "sourceType": "org.springframework.boot.autoconfigure.data.redis.RedisProperties"
+    },
+    {
+      "name": "spring.redis.cluster",
+      "type": "org.springframework.boot.autoconfigure.data.redis.RedisProperties$Cluster",
+      "sourceType": "org.springframework.boot.autoconfigure.data.redis.RedisProperties",
+      "sourceMethod": "getCluster()"
+    },
+  
+This file is loaded during boot process
+
+additional-spring-configuration-metadata.json
+
+  {
+      "name": "server.port",
+      "defaultValue": 8080
+    }
+
+Annotations are processed by ASM - java bytecode engineering lib.
+https://asm.ow2.io/
+
+.....................................................................................
+			Conditional Bean Creations
+.....................................................................................
+
+   When building a spring boot app, we sometimes want to only load beans or modules(configurations) into the application context(container) if some conditions met, Be it disable some beans during tests, or react to a certain property in the runtime env.
+
+Spring has annotation Called @Conditional annotation.
+
+This annotation allows us custom conditions to apply to parts of application context.
+
+Why Conditional Beans?
+
+   A spring application context contains an object graph that makes up all the beans that our application needs at runtime.
+@Conditional annotation allows us to define conditions under which a certain bean is included into that object graph.
+
+eg:
+
+ Some beans work in test env, the same bean i dont want in production env.
+ enable or disable some certain cross cutting concerns.
+  eg:
+    we have built a module that configures security, during dev test, we dont want to have username and passwords every time. so i want to disable the whole security module in local tests.
+ 
+ if some external resources is available without which they cant work. 
+   for eg: my application should not work if there is no logback.xml file has been found on classpath.
+
+- if beans does not exits  / exits
+- if module does not exits / exits
+- if external does not exits  / exits
+
+Declaring Conditional Bean:
+..........................
+In application, you can declare bean any where, optionaly we can add condition.
+
+only if this condition is satisifed will the bean added to the application context
+
+eg:
+
+@Configuration
+class MyBeanConfig {
+
+ @Conditional(...)
+ @Bean
+ public MyBean  getBean(){ 
+       return new MyBean()
+ }
+
+}
+
+
+Module Level
+
+@Configuration
+@Conditional(...)
+class MyBeanConfig {
+
+ @Bean
+ public MyBean  getBean(){ 
+       return new MyBean()
+ }
+
+}
+
+Component Level
+
+@Component
+@Conditional(...)
+class MyComponent {
+
+ 
+}
+........................................................................................................
+
+PreDefined Conditions:
+......................
+1.ConditionalOnProperty 
+   Loads beans based on env property - application.properties
+2.ConditionalOnExpression
+3.ConditionalOnBean
+4.ConditionalOnMissingBean
+5.ConditionalOnResource
+6.ConditionalOnClass
+7.ConditionalOnJava -  version based
+
+etc..
+custom conditions
+Boolean Operators
+Or
+And
+
+
+ConditionalBean:
+
+-OnBean - The bean if  threre , what should i do
+
+if Mysql dependency (driver jar) in the build path
+     -Create Datasource Object
+           -Add properties - connection string - url,password,userName
+
+
+-OnMissing -Then bean if not there ,what should i do
+  if web missing, then start console container
+
+package com.ibm.config;
+
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class DependantBeanConfig {
+
+    @Bean
+    OptionalBean optionalBean() {
+        return new OptionalBean();
+    }
+
+    @Bean
+    @ConditionalOnBean(OptionalBean.class)
+        //create this bean only if OptionalBean is available , if not dont
+    DependantBean dependantBean() {
+        return new DependantBean();
+    }
+
+    static class DependantBean {
+        public DependantBean() {
+            System.out.println("DependantBean is ready");
+        }
+    }
+
+    //Inner class which represents bean
+    static class OptionalBean {
+        public OptionalBean() {
+            System.out.println("OptionalBean is ready");
+        }
+    }
+}
+@ConditionalOnClass and @ConditionalOnMissingClass
+
+
+
+package com.valtech.bootapp.conditionalonclass;
+
+public class RequiredClass {
+}
+package com.valtech.bootapp.conditionalonclass;
+
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+//@ConditionalOnClass(name = "com.valtech.bootapp.conditionalonclass.RequiredClass2")
+public class SpringConfig {
+
+    @Bean
+    //@ConditionalOnClass(value = RequiredClass.class)
+//    @ConditionalOnClass(name = "com.valtech.bootapp.conditionalonclass.RequiredClass")
+    public MyClass getMyClass() {
+        return new MyClass();
+    }
+    @Bean
+    //@ConditionalOnClass(value = RequiredClass.class)
+//    @ConditionalOnMissingClass("com.valtech.bootapp.conditionalonclass.RequiredClass1")
+    public MyClass getMyClassMissing() {
+        return new MyClass("Missing Class");
+    }
+
+    public static class MyClass {
+
+        public MyClass(String message) {
+            System.out.println(message);
+        }
+
+        public MyClass() {
+            System.out.println("MyClass");
+        }
+    }
+}
+
+
+Conditional Componnent:
+
+@Component
+@ConditionalXXX
+public class MyComponent{}
+
+@ConditionalOnProperty("value.endabled",havingValue="true",matchIfMissing=true)
+@Configuration
+public class CrossCuttingModule{
+
+}
+......................................................................................			@SpringBootApplication
+.....................................................................................
+
+@SpringBootConfiguration
+@EnableAutoConfiguration
+@ComponentScan
+@SpringBootApplication
+
+package com.ibm;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
+
+@SpringBootApplication
+//@SpringBootConfiguration
+//@EnableAutoConfiguration
+//@ComponentScan
+public class MyspringbootApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(MyspringbootApplication.class, args);
+	}
+
+}
+Configuration   ------> Bean Creations - <bean>
+@@SpringBootConfiguration
+
+@EnableAutoConfiguration
+
+ -Tells Spring boot to guess how you  want to configure spring,based on the jar dependencies that you have addeded
+
+-IT auto configures the beans that are present in the class path.
+
+ This simplifies the developer work by guuessing the required beans from the class path and configures to run the application.
+
+-for eg, H2 is on your class path, you have not manually configured any database connection beans, then spring will auto configure an in memory database.
+
+
+@ComponentScan
+ Tells spring to look for other components,configurations and all services in the specificied package.
+Spring is able to auto scan,detect  and register your beans or components from predefined project package.
+if no package is specified current class package is taken as the root package.
+.......................................................................................................
+
+
+
+Beans and Spring Boot:
+
+
+package com.ibm.beans;
+
+import org.springframework.stereotype.Component;
+
+@Component
+public class HelloWorld {
+
+    public String sayHello() {
+        return "Hello";
+    }
+}
+
+package com.ibm;
+
+import com.ibm.beans.HelloWorld;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
+
+@SpringBootApplication
+//@SpringBootConfiguration
+//@EnableAutoConfiguration
+//@ComponentScan
+public class MyspringbootApplication {
+
+    public static void main(String[] args) {
+        ConfigurableApplicationContext context = SpringApplication.run(MyspringbootApplication.class, args);
+        HelloWorld helloWorld = context.getBean(HelloWorld.class);
+        System.out.println(helloWorld.sayHello());
+    }
+
+}
+
+
+Spring Boot App bootstrap from java main method
+
+
+SpringApplication.run(BootappApplication.class, args);
+
+When you run this.
+
+You will get
+
+1.It creates ApplicationContext object -Spring Container
+
+2.Register CommandLinePropertyResource
+
+3.Refersh ApplicationContext
+
+4.Trigger any CommandLineRunner Bean
+.....................................................................................
+Spring boot Application type:
+
+1.Spring Pojo Style App -command Line - Core Spring App
+
+2.Web Application - Servlet Based - Tomcat
+
+3.Reactive Web Apps - Reactive Extensions-Project Reactor- Netty
+
+
+Which application is default App?
+
+Based on starter Dependency.
+spring-boot-starter   ---- Spring Pojo Style app
+
+CLI 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+
+Web
+	<dependency>
+        			<groupId>org.springframework.boot</groupId>
+        			<artifactId>spring-boot-starter-web</artifactId>
+        		</dependency>
+
+Reactive web: non blocking- webflux:
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+.....................................................................................
+			 Web Service Development
+....................................................................................
+
+What is WebService?
+    WebService is a program , distributed program , deployed on Server called web container, returns data to the users in the form of document called "XML OR json or any format which user is interested"
+    WebService is just type of web application.
+
+.....................................................................................
+			   RestFull Web Service.
+.....................................................................................
+
+REST  Stands for - Representational State Transfer.
+
+Representational - Format / Data Format
+
+State - Data
+
+Transfer -Moving data 
+
+   "Moving/Transfering state from the server to clients using different formats like    xml,json,pdf,word,image...."
+
+API:
+  Application programming interface.
+  API means "method/function" which encapsulate biz logic eg save,update,delete.
+  APIs are organized into "classes" in object oriented programming
+
+
+package com.ibm;
+
+import org.springframework.stereotype.Service;
+
+@Service
+public class ProductService {
+
+    public String findAll() {
+        return "Products";
+    }
+
+    public String save() {
+        return "Save";
+    }
+
+    public String update() {
+        return "update";
+    }
+}
+
+
+How to invoke api?
+      ProductService productService=context.getBean(ProductService.class);
+        //invoke api
+        System.out.println(productService.findAll());
+        System.out.println(productService.save());
+        System.out.println(productService.update());
+
+We are calling api within same process(jvm).
+
+What if theses apis need to be called from other machine/other process?
+
+  If apis are called via networks, we need some kind of rules to invoke apis..
+  Rules are nothing "Protocal".
+
+Web is based on HTTP protocal.
+We can call apis through "HTTP" Protocal".
+
+HTTP protocal is just C program only.
+
+HTTP C program can be classified into two category
+
+1.Client program
+   HTTP client programs talks to server program via http protocal
+2.Server program
+   HTTP Server programs receives the req from the client program acts accrodingly.
+................
+
+Since HTTP c program.
+Any program has two things
+1.variables
+2.methods/functions
+
+variables are called "headers"
+methods are called "HTTP verbs" - GET,POST,DELETE,PUT,...TRACE,DEBUG....
+
+API design and http protocal:
+
+ Client------GET -----------------------------Server---runs GET---|mapping with api
+
+URI: 
+ It is addressing scheme to identify the "RESOURCES/API" in the server, maps accordingly...
+
+REST Spec:
+https://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm
+....................................................................................
 
 
 
