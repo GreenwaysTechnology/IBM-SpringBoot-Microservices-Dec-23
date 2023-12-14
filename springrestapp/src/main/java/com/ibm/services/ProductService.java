@@ -11,4 +11,17 @@ public class ProductService {
     public List<String> findAll() {
         return List.of("Phone", "Computer");
     }
+
+    public String save() {
+        return "Save";
+    }
+
+    public String update() {
+        return "Update";
+    }
+
+    public String remove() {
+        return "remove";
+    }
+
 }

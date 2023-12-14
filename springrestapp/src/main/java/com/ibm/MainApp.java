@@ -7,11 +7,10 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 @SpringBootApplication
 public class MainApp {
-
-    public static void main(String[] args) {
+   public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(MainApp.class, args);
-        ProductService productService = context.getBean(ProductService.class);
-        System.out.println(productService.findAll());
+//        ProductService productService = context.getBean(ProductService.class);
+//        System.out.println(productService.findAll());
     }
 
 }

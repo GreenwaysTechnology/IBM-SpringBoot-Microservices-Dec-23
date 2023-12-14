@@ -3105,7 +3105,824 @@ REST Spec:
 https://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm
 ....................................................................................
 
+....................................................................................
+			   REST Principles in java
+..................................................................................
+
+JEE proposed a spec to implement WebServices
+
+1.JAX WS - Java API for XML Web Service - SOAP based 
+2.JAX RS - Java API for RestFull web services-  REST based
+
+How we can use Spring to build RESTfull WebService?
+
+ Spring did not follow or implement "JAX RS SPEC" - Spring addeded their own implementation on the top of "Servlet".
+...................................................................................
+
+...................................................................................
+			 Spring and Restfull Web Service Integration
+....................................................................................
+
+Before RestFull Web services, Spring had "Dynamic web app development" module called Spring-MVC.
+
+Spring added new Layer on the top of Spring-MVC to build restfull apis by just introduction different annotations.
+
+How to start creating Spring Boot for building Rest api?
+spring-boot-starter-web
+  -can be used to build dynamic content apps- view based apps - dynamic content apps
+  -can be used to build dynamic content apps- Resources based apps -REST API
+
+
+pom.xml
+<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
 
 
 
-	
+Steps to Design Rest api:
+.........................
+
+API means the program which has biz functionality.
+
+According to REST Principle;
+
+ The Biz or domain functionality must be exposed as Resource.
+
+Resource:
+ It could be any thing which is accessiable via URL/URI.
+In general biz systems has collection of Objects like Product,Customer,Account...
+Every Object is called Resource.
+
+In Spring How to expose Resource?
+
+Controller.
+
+What is controller?
+ Controller is simple java class which is annotated by "@RestController"
+
+package com.ibm.app.resources;
+
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class CustomerController {
+    //apis
+    public String findAll() {
+        return "Customers";
+    }
+
+}
+
+How to identify the controller/Resource by clients?
+
+Using URI.
+@RequestMapping annotation is used to map resources by URI.
+
+
+package com.ibm.app.resources;
+
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/customers")
+public class CustomerController {
+    //apis
+    public String findAll() {
+        return "Customers";
+    }
+
+}
+
+API Representation. How to access?
+
+Any biz system we have many operations
+
+CURD operations:
+
+1.CREATE
+2.SELECT
+3.UPDATE
+4.DELETE
+
+IN http CURD operations are mapped by the following verbs
+
+1.GET - SELECT-READ
+2.POST - CREATE-INSERT
+3.PUT  - UPDATE
+4.DELETE - REMOVE
+
+Annotations to map the http VERBS
+
+1.GET - @GetMapping
+2.POST - @PostMapping
+3.PUT  - @PutMapping
+4.DELETE - @DeleteMapping
+..
+ProductService:
+package com.ibm.services;
+
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class ProductService {
+
+    //apis
+    public List<String> findAll() {
+        return List.of("Phone", "Computer");
+    }
+}
+package com.ibm.controllers;
+
+
+import com.ibm.services.ProductService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/products")
+public class ProductController {
+
+    @Autowired
+    private ProductService productService;
+
+    //apis
+    @GetMapping
+    public List<String> findAll() {
+        return productService.findAll();
+    }
+}
+.......................
+
+CURD Mapping:
+package com.ibm.controllers;
+
+
+import com.ibm.services.ProductService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/products")
+public class ProductController {
+
+    @Autowired
+    private ProductService productService;
+
+    //apis
+    @GetMapping
+    public List<String> findAll() {
+        return productService.findAll();
+    }
+
+    @PostMapping
+    public String save() {
+        return productService.save();
+    }
+
+    @PutMapping
+    public String update() {
+        return productService.update();
+    }
+
+    @DeleteMapping
+    public String remove() {
+        return productService.remove();
+    }
+}
+
+package com.ibm.controllers;
+
+
+import com.ibm.services.ProductService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/products")
+public class ProductController {
+
+    @Autowired
+    private ProductService productService;
+
+    //apis
+    @GetMapping
+    public List<String> findAll() {
+        return productService.findAll();
+    }
+
+    @PostMapping
+    public String save() {
+        return productService.save();
+    }
+
+    @PutMapping
+    public String update() {
+        return productService.update();
+    }
+
+    @DeleteMapping
+    public String remove() {
+        return productService.remove();
+    }
+}
+.....................................................................................
+				Input and Output
+....................................................................................
+Input: 
+  How to pass input to api?
+
+Input can be passed in two ways
+
+1.as part of url 
+2.as part of payload
+
+URL:
+ http://localhost:8080/api/products
+
+Parameters:
+  passing data via url is called parameters.
+
+There are different types of parameters
+
+1.Path Parameter
+2.Query Parameter
+3.Matrix Parameter - Optional
+
+Path Parameter:
+
+ http://localhost:8080/api/products/1
+ http://localhost:8080/api/products/2
+
+
+HTTP Request Structure:
+......................
+Request contains two segments
+
+1.Request Headers
+   We pass Request Headers
+2.Request Body 
+    We pass data 
+
+
+
+Parmeters vs Payload:
+.....................
+Parameters and payload both are used to send data to server .
+
+Parameters send data via "URL" /as part of the URL....
+
+http://www.example.com/api/users/23
+http://www.example.com/api/products?sorting=asyn
+
+here 23 and sorting=asyn are data
+
+Payload is used to send data as part of Request body which is hidden from the user, we cant see.
+
+Suppose if i want send "Customer information,Product Information" as json
+
+...................................................................................
+			Sending data via URL - Path Parameter
+...................................................................................
+Path Parameters are used to get information based on input - Dynamic URLS
+
+Path Parameters Synatx:
+
+  -Query Information based on dynamic input called path
+
+   /api/resource/{placeholder}
+   /api/orders/1
+   /api/orders/2
+
+GET http://example.com/api/users/1
+
+package com.ibm.controllers;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/users")
+public class UserController {
+
+    @GetMapping
+    public List<String> findAll() {
+        return List.of("Subramanian", "Murugan");
+    }
+
+    @GetMapping("/{name}")
+    public String findByName(@PathVariable("name") String name) {
+        return name;
+    }
+
+}
+....................................................................................
+		QueryParam /Query Strings/ Request Parameters
+.....................................................................................
+
+Syntax:
+http://www.example.com/api/products?sorting=asyn&filter=city
+
+package com.ibm.controllers;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/customers")
+public class CustomerController {
+
+    //http://localhost:8080/api/customers/search?city=Coimbatore
+    @GetMapping("/search")
+    public String filterByCity(@RequestParam("city") String city) {
+        return city;
+    }
+}
+		...................................................................................
+			 Sending Payload to Server
+...................................................................................
+
+What if i want to send user json?
+
+{
+    "id": 1,
+    "name": "Subramanian"
+}
+We have to send via Payload.
+
+How to receive Payload in the server?
+  @RequestBody
+
+
+    @PostMapping
+    public String save(@RequestBody User user) {
+        System.out.println(user);
+        return "Saved";
+    }
+
+PostMan:
+POST http://localhost:8080/api/users
+
+{
+    "id": 2,
+    "name": "John"
+}
+
+eg:
+package com.ibm.enity;
+
+public class Book {
+    private int ISBNNumber;
+    private String bookName;
+    private String authorName;
+
+    public Book() {
+    }
+
+    public Book(int ISBNNumber, String bookName, String authorName) {
+        this.ISBNNumber = ISBNNumber;
+        this.bookName = bookName;
+        this.authorName = authorName;
+    }
+
+    public int getISBNNumber() {
+        return ISBNNumber;
+    }
+
+    public void setISBNNumber(int ISBNNumber) {
+        this.ISBNNumber = ISBNNumber;
+    }
+
+    public String getBookName() {
+        return bookName;
+    }
+
+    public void setBookName(String bookName) {
+        this.bookName = bookName;
+    }
+
+    public String getAuthorName() {
+        return authorName;
+    }
+
+    public void setAuthorName(String authorName) {
+        this.authorName = authorName;
+    }
+}
+package com.ibm.controllers;
+
+import com.ibm.enity.Book;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/books")
+public class BookController {
+
+    @PostMapping(consumes = {"application/json"}, produces = {"application/json"})
+    public Book createBook(@RequestBody Book book) {
+        System.out.println(book.getBookName() + book.getAuthorName() + book.getISBNNumber());
+        return book;
+    }
+}
+.....................................................................................
+			   Output Types -Response Types
+.................................................................................
+api is just method.
+any method which may take arg and also it may return values.
+
+public String findAll() {
+        return "Customers";
+}
+
+Return Value:Reponse Types
+1.String
+2.Object - Plain Domain Object or Collection like List or Set or Array
+3.ResponseEntity
+4.void
+5.Reactive Type
+
+What value you return, accordingly content-type would be converted.
+
+String  - plain/text
+Object/Collection - application/json 
+ReponseEntity -  application/json
+void - only status code
+Reactive Type - application/json
+
+Response:
+  The Response nothing but the output of the api which is sent over http protocal.
+
+Response Contains two things
+
+1.Payload - Data which is returned
+2.Meta Data(Headers)
+   Headers are just variables which hold some values which describe the nature of response.
+
+Response Headers
+................
+1.Content-Type
+
+Content-Type: text/html; charset=utf-8
+
+The MIME type of this content. What type of data server is sending to client.
+
+Basic content type of web is:
+  HTML
+  Plain/text
+Rest content type is :
+  
+  Representational State Transfer
+      |             |
+   Data Format     Data
+      |
+json
+xml
+pdf
+word
+etc...
+
+By Default in REST is "json"
+
+2.Content-Length
+
+Content-Length: 348
+
+The length of the response body expressed in 8-bit bytes
+
+
+3.Date
+Date: Tue, 15 Nov 1994 08:12:31 GMT
+
+The date and time that the message was sent (in “HTTP-date” format as defined by RFC 7231)
+
+4.keep-alive
+  It is header which talks how long the http connection can exits between server and client default is 60ms
+
+5.Connection
+Connection: close
+
+Control options for the current connection and list of hop-by-hop response fields. Deprecated in HTTP/2
+.....................................................................................
+			Sending Status Code
+....................................................................................
+
+HTTP operation Status:
+
+-> informational response - 100 to 199-1X
+-> success response -  200-299-2X
+-> Redirects  - 300-399 -3X
+-> client errors - 400-499 -4X
+-> server errrors - 500-599 - 5X
+
+Status Code : 100 to 500
+1XX Information Responses
+
+100 Continue
+101 Switching Protocols
+102 Processing
+103 Early Hints
+
+2XX Success
+
+200 OK
+201 Created
+202 Accepted
+203 Non-Authoritative Information
+204 No Content
+205 Reset Content
+206 Partial Content
+207 Multi-Status
+208 Already Reported
+226 IM Used
+
+3XX Redirection
+300 Multiple Choices
+301 Moved Permanently
+302 Found
+303 See Other
+304 Not Modified
+305 Use Proxy
+306 Switch Proxy
+307 Temporary Redirect
+308 Permanent Redirect
+
+4XX Client errors
+
+400 Bad Request
+401 Unauthorized
+402 Payment Required
+403 Forbidden
+404 Not Found
+405 Method Not Allowed
+406 Not Acceptable
+407 Proxy Authentication Required
+408 Request Timeout
+409 Conflict
+410 Gone
+411 Length Required
+412 Precondition Failed
+413 Payload Too Large
+414 URI Too Long
+415 Unsupported Media Type
+416 Range Not Satisfiable
+417 Expectation Failed
+418 I'm a teapot
+420 Method Failure
+421 Misdirected Request
+422 Unprocessable Entity
+423 Locked
+424 Failed Dependency
+426 Upgrade Required
+428 Precondition Required
+429 Too Many Requests
+431 Request Header Fields Too Large
+451 Unavailable For Legal Reasons
+
+5XX Server errors
+500 Internal Server error
+501 Not Implemented
+502 Bad Gateway
+503 Service Unavailable
+504 gateway Timeout
+505 Http version not supported
+506 Varient Also negotiate
+507 Insufficient Storage
+508 Loop Detected
+510 Not Extended
+511 Network Authentication Required
+
+ "By default spring sends 200 status for all success request and response."
+
+What if i want to send some special status code?
+
+According to Rest , Post method must return 201.
+
+How to add StatusCode in the Response?
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public String save(){
+        return "Saved";
+    }
+
+What if i dont send any content? - 204-NotContent
+   
+    @GetMapping("/process")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public  void process(){
+        System.out.println("Processed");
+    }
+
+
+eg:
+package com.ibm.controllers;
+
+import com.ibm.enity.Subject;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/subjects")
+public class SubjectController {
+
+    @GetMapping
+    public String findSubject() {
+        return "Java";
+    }
+
+    @GetMapping("/one")
+    public Subject getSubject() {
+        return new Subject(1, "spring");
+    }
+
+    @GetMapping("/list")
+    public List<Subject> getSubjects() {
+        return List.of(new Subject(1, "spring"), new Subject(2, "microservices"));
+    }
+
+    //    @PostMapping
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public String save() {
+//        return "saved";
+//    }
+    @PostMapping
+    public ResponseEntity<String> save() {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .header("secrete", "abc")
+                .body("saved");
+
+    }
+
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void remove() {
+        System.out.println("removed");
+    }
+
+
+}
+.....................................................................................
+			 Rest api with Data layer
+.....................................................................................
+
+Java can talk to any data base.
+Java uses jdbc api to talk to databases.
+Java introduced ORM , object relational mapping - object oriented way of writing database code, generally database deals SQL queries.
+
+ORM Framework was created to abstract low level sql operations- Hibernate.
+
+After hibernate many vendors started create orm solutions.
+
+Developers started using various orm solutions, java community has seen this wanted to standarize orm solutions.
+
+JPA:
+  Java Persistency API - it is abstraction, specification provided by java team.....
+  JPA recommends to provide solution based on JPA Standards.
+
+Now developers write code using JPA Standards but underneeth, they can plug any orm runtime like hibernate or toplink.
+
+
+				App
+				 |
+				JPA
+				 |
+		   -----------------------------
+			Toplink  	Hibernate
+		..................................
+				|
+			       JDBC 	-low level
+				|
+			    Data bases
+
+
+Spring Boot provides various projects to deal with databases...
+
+If your app is based on JPA, Spring Provides special called "Spring Data JPA"			
+
+			    Your App
+				 |
+			  Spring Data JPA
+				 |
+				JPA
+				 |
+		   -----------------------------
+			Toplink  	Hibernate
+		..................................
+				|
+			       JDBC 	-low level
+				|
+			    Data bases
+
+
+Spring Data JPA:
+................
+
+=>Provides  Readmade CURD operations
+=>Object oriented model
+=>Provides CURD repositories
+
+
+Steps:
+1.You need select database.
+2.You database drivers must be added
+3.you need to add jpa dependencies
+
+
+Create Spring boot project with following dependencies
+
+	<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+
+configure the db:
+application.properties
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=
+spring.datasource.jpa.database-platform=org.hibernate.dialect.H2Dialect
+spring.h2.console.enabled=true
+spring.h2.console.path=/h2
+
+Enter into database console
+http://localhost:8080/h2
+
+Coding:
+
+1.Define Table - Declaring entity.
+
+Entity is object which maps table in relational database.
+
+package com.ibm.entities;
+
+import jakarta.persistence.*;
+import lombok.Data;
+
+@Entity
+@Table(name = "customers")
+@Data //generate constructors,setters and getters,toString
+public class Customer {
+    //Column name
+    @Id //says that it is primary key in the table.
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "customerId")
+    private Long customerId;
+    private String firstName;
+    private String lastName;
+    private String city;
+}
+
+Run the project, Have a look at h2 console, there is table is created...
+
+
+
+
+
+
+
+
+
+
+
