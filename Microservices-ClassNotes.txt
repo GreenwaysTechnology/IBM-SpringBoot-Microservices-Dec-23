@@ -1,0 +1,91 @@
+
+
+Data Per service Pattern
+
+Each service has its own database
+
+Drawback:
+
+ Transactions across service is complex
+   updating or inserting multiple tables across multiple datbase
+
+for eg:
+ order table and customer table
+
+Query data across multiple
+
+Join data across multiple tables
+
+......................
+
+Transactions:
+ Implementing transactions that span services - use the Saga pattern.
+
+Query:
+  CQRS,API Composition
+
+
+Problem-Microservice-BC->Database-Dperservice- saga and CQRS
+
+Services are communicated by sending message(events) to other services -saga
+
+in order to send message and receives
+we have to pattern
+1.Choreography
+2.Orchestration
+
+How to send and receive messages(events)?
+
+  Event sourcing /Domain Event (DDD)
+..............................................................................
+
+rep.save(order)-----------------> insert into ordertable
+broker.send(order)-------------------->insert into message broker(Apache 				     Kafka)/RabitMQ/google PUb/sub
+
+Event driven microservices--->Eventsourcing - core pattern| 
+...................................................................................
+				Microserivces implementation
+...............................................................................
+
+
+
+
+		Spring cloud
+
+			|
+
+			 restap,db,integration etc.....
+				|
+			    Spring Boot
+				|
+			   SPRING FRAMEWORK - xml,java config
+				JEE
+
+....................................................................................
+
+Event sourcing with kafka using Kafka Templates:
+................................................
+
+1.you need database - h2
+2.You need kafka -using docker
+3.spring boot project - add kafka,configuration,write events,update tables.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
