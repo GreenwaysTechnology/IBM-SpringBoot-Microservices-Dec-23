@@ -1,0 +1,7 @@
+vmartin:
+  name: Martin D'vloper
+  job: Developer
+  skill: Elite
+
+server:
+  port: 8081

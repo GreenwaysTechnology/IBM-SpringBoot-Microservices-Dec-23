@@ -63,6 +63,37 @@ Event driven microservices--->Eventsourcing - core pattern|
 
 ....................................................................................
 
+Event sourcing with database,kafka,eventstoredb,google pub/sub ,eventuate tram
+
+
+Solutions:
+Event sourcing with database
+
+There are only tables
+2.EventStore- table which stores "sequence of biz transactions"
+
+database h2.
+
+Event - something is happing /happend
+ Mail has arrvied
+ I am typing 
+ Create Order - event
+ Update Inventory
+ Create User
+ Update User
+ Delete product
+ 
+Now we need to store every event(what is happening) in the system.
+
+in order to store event, we need to reprent event.
+
+In kafka like system events are represented by a structure called "Record".
+
+In our example event is represented as "java Object"-
+
+StockAddedEvent - {name,quantity,user} ===> store db or into kafka
+StockRemovedEvent-{name,quantity,user} ===> store db or into kafka
+
 Event sourcing with kafka using Kafka Templates:
 ................................................
 
