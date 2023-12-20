@@ -1702,9 +1702,9 @@ The core building blocks of Spring Cloud Stream are:
 
 1.Destination Binders: Components responsible to provide integration with the external messaging systems.
 
-Destination Bindings: Bridge between the external messaging systems and application code (producer/consumer) provided by the end user.
+2.Destination Bindings: Bridge between the external messaging systems and application code (producer/consumer) provided by the end user.
 
-Message: The canonical data structure used by producers and consumers to communicate with Destination Binders (and thus other applications via external messaging systems).
+3.Message: The canonical data structure used by producers and consumers to communicate with Destination Binders (and thus other applications via external messaging systems).
 
 
 Spring Cloud Stream application Types

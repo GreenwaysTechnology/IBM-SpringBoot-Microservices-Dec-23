@@ -100,23 +100,189 @@ Event sourcing with kafka using Kafka Templates:
 1.you need database - h2
 2.You need kafka -using docker
 3.spring boot project - add kafka,configuration,write events,update tables.
+.....................................................................................
+			 Kafka
+.....................................................................................
+
+kafka and spring 
+
+1.spring-kafka -  using KafkaTemplate
+2.spring-cloud-stream- advanced kafka integration
+....................................................................................
+
+Data Management:
+
+1.Shared Database
+
+2.Database Per service Pattern
 
 
+Database Arch:
+
+1.services are isloated
+2.Services need to update database tables based on other services
+3.Services need to query and join data across from different services
+4.services may use different databases like mongo or mysql
+
+Solution:
+ 1.You can use single database
+    Shared database
+
+Advantages:
+1.single database - so transactions are very very use.
+
+BEGIN TRANSACTION
+…
+SELECT ORDER_TOTAL
+ FROM ORDERS WHERE CUSTOMER_ID = ?
+…
+SELECT CREDIT_LIMIT
+FROM CUSTOMERS WHERE CUSTOMER_ID = ?
+…
+INSERT INTO ORDERS …
+…
+COMMIT TRANSACTION
+
+2.Easy administration and Maintance.
+
+drawbacks:
+ Tight coupling
+   during development
+   during runtime.
+
+...................................................................................
+.Database Per service Pattern
+
+Keep database for every service.
+
+Advantages:
+Helps ensure that the services are loosely coupled. Changes to one service’s database does not impact any other services.
+
+Each service can use the type of database that is best suited to its needs. For example, a service that does text searches could use ElasticSearch. A service that manipulates a social graph could use Neo4j.
+
+Drawbacks:
+1.transactions are really challange
+
+2.Query handling is also complicated
+
+3.Multiple different database communication so hard
+
+Transactions:
+  INSERT,UPDATE,DELETE
+Query:
+  SELECT,JOIN
+
+There are various patterns/solutions for implementing transactions and queries that span services:
+
+Transactions: SAGA
+Queries : CQRS,APICOMPOSTION
+
+Database
+   |
+   DatabasePerService
+	 |
+         SAGA - Transactions
+         CQRS/APICOMPOSTION - QUERY,JOIN
+.....................................................................................
+SAGA:
+You have applied the Database per Service pattern. Each service has its own database. Some business transactions, however, span multiple service so you need a mechanism to implement transactions that span services.
+
+How to implement transactions that span services?
+
+-2PC - 2phase commit - It is not usefull in microservices- not recommend.
+
+A saga is a sequence of local transactions.
+
+In each biz transactions which updates local databases, when ever a database is updated , we need to publish "event" using event sourcing pattern - saga.
+Each services are going to communicate over events via message brokers.
+
+SAGA implementation:
+ It involes two things
+
+=>Updating local database with transactions
+=>Sending and receiving message(event)
+
+Cordination of saga:
+
+1.Choreography - each local transaction publishes domain events that trigger local transactions in other services
+
+2.Orchestration - an orchestrator (object) tells the participants what local transactions to execute
+
+Choreography vs Orhestration:
+
+Choregograph "transactions" are handled by "either service or controller" directly
+that means you have to write code to publish messages and listen message.
 
 
+Orchestration "transactions" are isloated from the biz logic/code , There is orchestrator who is responsible for publishing and listening message..
+
+In realtime, orchestrator could be a separate java code or it could be a tool.
+.....................................................................................
+
+Implementation:
+
+Program:
+=>H2 Database.
+=>spring-Data-jpa
+=>Spring-cloud-stream,spring-kafka,spring-cloud-stream-kafka-binder
+=>Reactive Programming -WebFlux
+
+Reactive Programming:
+.....................
+java:
+RXJAVA- lib which implements reactive programming principles- observer designpatter,iterator design pattern,fp principles
+
+Project Reactor:
+  From Spring team.
+
+Muntiny
+  From Red hat.
+
+SPring created reactive extension on spring framework using another abstraction called spring-web flux
+
+			  
+			Project Reactor
+			  |
+	
+			 WebFlux
+			   |
+  		       Spring Boot
 
 
+Types of web apps in spring boot:
+1.Blocking web - tomcat
+2.Reactive web - netty
 
 
+According to reactive programming there are two objects
+
+1.Publisher - which is object who publishes events(data,error,complete)
+2.Consumer/Subscriber- which is object who listens for events.
 
 
+Project Reactor(WebFlux) Publisher Type:
+...............................
+
+1.Flux
+   Can publish 0 to n events
+2.Mono
+  can publish single event.
 
 
+Flux.just("Hello") - emit data event with data called "Hello".
 
+Mono.just("Hello") -  emit data event with data called "Hello"
 
+Flux can emit more values,where as Mono can emit only one value
 
+Flux.just(1,2,3,4,5...)
+Mono.just(10)
 
+In Spring webflux , Rest api return types:
 
-
-
-
+Return Value:Reponse Types
+1.String
+2.Object - Plain Domain Object or Collection like List or Set or Array
+3.ResponseEntity
+4.void
+5.Reactive Type - Flux or Mono
