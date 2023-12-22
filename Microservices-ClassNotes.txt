@@ -379,6 +379,56 @@ inventory event.
 
 Orchestrator is can be java program or a tool from third party or as part of cloud..
 
+.....................................................................................
+			   CQRS - Pattern
+.....................................................................................
+
+You have Microservice Architecture
+		|
+	   Data Per Service
+		|
+         Event Sourcing Pattern
+		|
+   How to Query data from multiple tables across services
+
+
+Solution : 
+  CQRS Pattern
+
+Define a separate database which has only readonly view.
+....................................................................................
+			Service Communications
+....................................................................................
+
+RPI :
+  REST To Rest Communications.
+
+api style: coding style
+1.RestTemplate
+2.RestClient - spring 6.x
+3.Webclient
+4.HTTP Interface - spring 6.x
+5.OpenFignClient - Third party lib
+....................................................................................
+
+Service communications via client side discovery using "Eurka server".
+
+
+1.Hello-Service
+2.Any Rest client Service(restTemplate,webclient etc...)
+3.Service Registry- Eurka
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
